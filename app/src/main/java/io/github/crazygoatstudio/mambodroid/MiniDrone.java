@@ -124,6 +124,8 @@ public class MiniDrone {
 
         } else {
             Log.e(TAG, "DeviceService type is not supported by MiniDrone");
+
+
         }
     }
 

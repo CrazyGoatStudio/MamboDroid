@@ -62,10 +62,14 @@ public class DeviceListActivity extends AppCompatActivity {
                 ARDiscoveryDeviceService service = (ARDiscoveryDeviceService)mAdapter.getItem(position);
                 ARDISCOVERY_PRODUCT_ENUM product = ARDiscoveryService.getProductFromProductID(service.getProductID());
                 switch (product) {
+//                    toDo: Add real list of supported devices (should be all minidrones)
                     case ARDISCOVERY_PRODUCT_ARDRONE:
                     case ARDISCOVERY_PRODUCT_MINIDRONE:
                     case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_BRICK:
                     case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_LIGHT:
+                        intent = new Intent(DeviceListActivity.this, MainActivity.class);
+                        break;
+                    case ARDISCOVERY_PRODUCT_MINIDRONE_DELOS3:
                         intent = new Intent(DeviceListActivity.this, MainActivity.class);
                         break;
 
