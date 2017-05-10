@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView speechtext;
     private ImageButton speechbtn;
     private ImageButton emgbtn;
+    private Button North, South, East, West, Stop, Barrel;
+
     protected static final int RESULT_SPEECH = 1;
     private String currentcommand;
     private MiniDrone mMiniDrone;
@@ -51,40 +53,39 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        speechtext = (TextView) findViewById(R.id.spchtxt);
+        TraerReferencias();
+        ProgramarEscuchaDeEvento ();
+
+        Intent intent = getIntent();
+        ARDiscoveryDeviceService service = intent.getParcelableExtra(DeviceListActivity.EXTRA_DEVICE_SERVICE);
+        mMiniDrone = new MiniDrone(this, service);
+        mMiniDrone.addListener(mMiniDroneListener);
+    }
+    private void TraerReferencias(){
         speechbtn = (ImageButton) findViewById(R.id.spkbtn);
         emgbtn = (ImageButton) findViewById(R.id.emg);
         mBatteryLabel = (TextView) findViewById(R.id.battery);
-        emgbtn.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                switch (mMiniDrone.getFlyingState()) {
-                    case ARCOMMANDS_MINIDRONE_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_FLYING:
-                    case ARCOMMANDS_MINIDRONE_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_HOVERING:
-                        mMiniDrone.land();
-                        break;
-                    default:
-                }/*
-                mMiniDrone.setYaw((byte) 0);
-                mMiniDrone.setGaz((byte) 0);
-                mMiniDrone.setPitch((byte) 0);
-                mMiniDrone.setFlag((byte)0);*/
-            }
-        });
+        North = (Button) findViewById(R.id.bNorth);
+        South = (Button) findViewById(R.id.bSouth);
+        East = (Button) findViewById(R.id.bEast);
+        West = (Button) findViewById(R.id.bWest);
+        Stop = (Button) findViewById(R.id.bStop);
+        Stop = (Button) findViewById(R.id.bBarrel);
+
+    }
+    private void ProgramarEscuchaDeEvento ()
+    {
+        // Ass long speechbutton event listener
         speechbtn.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(
                         RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US");
-
                 try {
                     startActivityForResult(intent, RESULT_SPEECH);
-                    speechtext.setText("");
+
                 } catch (ActivityNotFoundException a) {
                     Toast t = Toast.makeText(getApplicationContext(),
                             "Oops! Your device doesn't support Speech to Text",
@@ -93,10 +94,73 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        Intent intent = getIntent();
-        ARDiscoveryDeviceService service = intent.getParcelableExtra(DeviceListActivity.EXTRA_DEVICE_SERVICE);
-        mMiniDrone = new MiniDrone(this, service);
-        mMiniDrone.addListener(mMiniDroneListener);
+        // emergency  button, pretty self explanatory.
+        emgbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (mMiniDrone.getFlyingState()) {
+                    case ARCOMMANDS_MINIDRONE_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_FLYING:
+                    case ARCOMMANDS_MINIDRONE_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_HOVERING:
+                        mMiniDrone.land();
+                        break;
+                    default:
+                }
+            }
+        });
+        North.setOnClickListener
+                (new View.OnClickListener() {
+                     public void onClick(View arg0) {
+                             mMiniDrone.setFlag((byte) 1);
+                             mMiniDrone.setPitch((byte) 15);
+                     }
+                 }
+                );
+        South.setOnClickListener
+                (new View.OnClickListener() {
+                     public void onClick(View arg0) {
+                         mMiniDrone.setFlag((byte) 1);
+                         mMiniDrone.setPitch((byte) -15);
+                     }
+                 }
+                );
+        East.setOnClickListener
+                (new View.OnClickListener() {
+                     public void onClick(View arg0) {
+                         mMiniDrone.setFlag((byte) 1);
+                         mMiniDrone.setRoll((byte) 15);
+                     }
+                 }
+                );
+        West.setOnClickListener
+                (new View.OnClickListener() {
+                     public void onClick(View arg0) {
+                         mMiniDrone.setFlag((byte) 1);
+                         mMiniDrone.setRoll((byte) -15);
+                     }
+                 }
+                );
+        Stop.setOnClickListener
+                (new View.OnClickListener() {
+                     public void onClick(View arg0) {
+//                         buttonVibrar();
+                         mMiniDrone.setYaw((byte) 0);
+                         mMiniDrone.setGaz((byte) 0);
+                         mMiniDrone.setPitch((byte) 0);
+                         mMiniDrone.setFlag((byte)0);
+                     }
+                 }
+                );
+        Stop.setOnClickListener
+                (new View.OnClickListener() {
+                     public void onClick(View arg0) {
+//                         buttonVibrar();
+
+                     }
+                 }
+                );
+
+
+        // end emergency button
     }
     @Override
     protected void onStart() {
@@ -187,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList<String> text = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-                    speechtext.setText(text.get(0));
+
                     currentcommand = text.get(0);
                     if(currentcommand.toLowerCase().trim().equals("turn right")) {
                         mMiniDrone.setYaw((byte) 25);
