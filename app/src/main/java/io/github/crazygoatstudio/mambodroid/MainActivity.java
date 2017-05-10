@@ -1,6 +1,5 @@
 package io.github.crazygoatstudio.mambodroid;
 
-
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome);
+        setContentView(R.layout.activity_main);
 
         speechtext = (TextView) findViewById(R.id.spchtxt);
         speechbtn = (ImageButton) findViewById(R.id.spkbtn);
