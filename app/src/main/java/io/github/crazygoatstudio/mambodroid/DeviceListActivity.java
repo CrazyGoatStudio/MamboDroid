@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,17 @@ public class DeviceListActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Start", Toast.LENGTH_SHORT);
         setContentView(R.layout.activity_welcome);
         final ListView listView = (ListView) findViewById(R.id.list);
+
+
+        // Debug button
+        findViewById(R.id.bDebug).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DeviceListActivity.this, DebugActivity.class);
+                startActivity(intent);
+
+            }
+        });
 
         // Assign adapter to ListView
         listView.setAdapter(mAdapter);

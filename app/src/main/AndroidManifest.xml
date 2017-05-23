@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -19,13 +20,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--Add Other activities like this-->
-        <activity android:name=".MainActivity" >
-            <!--Default Intent Filter-->
+        <!-- Add Other activities like this -->
+        <activity android:name=".MainActivity">
+            <!-- Default Intent Filter -->
             <intent-filter>
                 <action android:name="android.intent.action.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".DebugActivity"></activity>
     </application>
 
 </manifest>
