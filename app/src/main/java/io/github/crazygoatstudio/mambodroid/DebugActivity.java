@@ -28,7 +28,12 @@ public class DebugActivity extends AppCompatActivity {
     // Also, if the message is the inner class, then it must be static.
     public static class MyResponse
     {
-        public int Length;
+
+        public float Yaw;
+
+        public float Pitch;
+
+        public float Roll;
     }
 
     // UI controls
@@ -36,6 +41,9 @@ public class DebugActivity extends AppCompatActivity {
     private EditText myMessageTextEditText;
     private EditText myResponseEditText;
     private Button mySendRequestBtn;
+    private TextView ctv_Pitch;
+    private TextView ctv_Roll;
+    private TextView ctv_Yaw;
 
 
     // Sender sending MyRequest and as a response receiving MyResponse.
@@ -50,6 +58,9 @@ public class DebugActivity extends AppCompatActivity {
         myMessageTextEditText = (EditText) findViewById(R.id.messageTextEditText);
         myResponseEditText = (EditText) findViewById(R.id.messageLengthEditText);
         mySendRequestBtn = (Button) findViewById(R.id.sendRequestBtn);
+        ctv_Pitch = (TextView) findViewById(R.id.tv_Pitch);
+        ctv_Roll = (TextView) findViewById(R.id.tv_Roll);
+        ctv_Yaw = (TextView) findViewById(R.id.tv_Yaw);
 
         // Subscribe to handle the button click.
         mySendRequestBtn.setOnClickListener(myOnSendRequestClickHandler);
@@ -134,7 +145,10 @@ public class DebugActivity extends AppCompatActivity {
             @Override
             public void run()
             {
-                myResponseEditText.setText(Integer.toString(e.getResponseMessage().Length));
+
+                ctv_Pitch.setText(Float.toString(e.getResponseMessage().Pitch));
+                ctv_Roll.setText(Float.toString(e.getResponseMessage().Roll));
+                ctv_Yaw.setText(Float.toString(e.getResponseMessage().Yaw));
             }
         });
     }

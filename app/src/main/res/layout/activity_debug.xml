@@ -56,11 +56,11 @@
                 android:layout_height="wrap_content"
                 android:text="Pitch" />
 
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextView" />
+        <TextView
+            android:id="@+id/tv_Pitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
         </TableRow>
 
         <TableRow
@@ -74,7 +74,7 @@
                 android:text="Roll" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/tv_Roll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView" />
@@ -91,7 +91,7 @@
                 android:text="Yaw" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/tv_Yaw"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView" />
