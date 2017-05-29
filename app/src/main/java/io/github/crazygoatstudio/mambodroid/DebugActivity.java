@@ -44,6 +44,7 @@ public class DebugActivity extends AppCompatActivity {
     private TextView ctv_Pitch;
     private TextView ctv_Roll;
     private TextView ctv_Yaw;
+    private Switch vsw_Leap;
 
 
     // Sender sending MyRequest and as a response receiving MyResponse.
@@ -64,6 +65,13 @@ public class DebugActivity extends AppCompatActivity {
 
         // Subscribe to handle the button click.
         mySendRequestBtn.setOnClickListener(myOnSendRequestClickHandler);
+
+
+
+
+
+        // Subscribe to handle the button click.
+
 
         // Open the connection in another thread.
         // Note: From Android 3.1 (Honeycomb) or higher
@@ -134,7 +142,37 @@ public class DebugActivity extends AppCompatActivity {
             EneterTrace.error("Sending the message failed.", err);
         }
     }
-
+    private int rangeAngle(float raw)
+    {
+        if (raw > 70 )
+        {
+            return 20;
+        }
+        else if (raw > 50 )
+        {
+            return 10;
+        }
+        else if(raw >30)
+        {
+            return 5;
+        }
+        else if(raw <-70)
+        {
+            return -20;
+        }
+        else if(raw <-50)
+        {
+            return -10;
+        }
+        else if(raw <-30)
+        {
+            return -5;
+        }
+        else
+        {
+            return 0;
+        }
+    }
     private void onResponseReceived(Object sender, final
     TypedResponseReceivedEventArgs<MyResponse> e)
     {
@@ -146,8 +184,15 @@ public class DebugActivity extends AppCompatActivity {
             public void run()
             {
 
-                ctv_Pitch.setText(Float.toString(e.getResponseMessage().Pitch));
-                ctv_Roll.setText(Float.toString(e.getResponseMessage().Roll));
+                //<editor-fold desc="Pitch">
+                ctv_Pitch.setText(Integer.toString(rangeAngle(e.getResponseMessage().Pitch)));
+                //</editor-fold>
+                //<editor-fold desc="Roll">
+                ctv_Roll.setText(Integer.toString(rangeAngle(e.getResponseMessage().Roll)));
+                //</editor-fold>
+
+//                ctv_Pitch.setText(Float.toString(e.getResponseMessage().Pitch));
+//                ctv_Roll.setText(Float.toString(e.getResponseMessage().Roll));
                 ctv_Yaw.setText(Float.toString(e.getResponseMessage().Yaw));
             }
         });
