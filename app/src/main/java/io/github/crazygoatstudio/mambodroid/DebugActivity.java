@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.*;
 
+import static io.github.crazygoatstudio.mambodroid.UtilsKt.rangeAngle;
+
 public class DebugActivity extends AppCompatActivity {
     // Request message type
     // The message must have the same name as declared in the service.
@@ -142,28 +144,7 @@ public class DebugActivity extends AppCompatActivity {
             EneterTrace.error("Sending the message failed.", err);
         }
     }
-    private int rangeAngle(float raw)
-    {
 
-        if (raw < 20 && raw > -20)
-        {
-            return 0;
-        }
-        else
-        {
-            if (raw > 70) raw = 70;
-            if (raw < -70) raw = -70;
-            if (raw > 0)
-            {
-
-                return (int)(raw-20) * 2;
-            }
-            else
-            {
-                return (int)(raw+20) * 2;
-            }
-        }
-    }
     private void onResponseReceived(Object sender, final
     TypedResponseReceivedEventArgs<MyResponse> e)
     {

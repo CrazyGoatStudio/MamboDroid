@@ -40,6 +40,8 @@ import eneter.messaging.messagingsystems.messagingsystembase.*;
 import eneter.messaging.messagingsystems.tcpmessagingsystem.TcpMessagingSystemFactory;
 import eneter.net.system.EventHandler;
 
+import static io.github.crazygoatstudio.mambodroid.UtilsKt.rangeAngle;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -442,28 +444,6 @@ public class MainActivity extends AppCompatActivity {
         catch (Exception err)
         {
             EneterTrace.error("Sending the message failed.", err);
-        }
-    }
-    private int rangeAngle(float raw)
-    {
-
-        if (raw < 20 && raw > -20)
-        {
-            return 0;
-        }
-        else
-        {
-            if (raw > 70) raw = 70;
-            if (raw < -70) raw = -70;
-            if (raw > 0)
-            {
-
-                return (int)(raw-20) * 2;
-            }
-            else
-            {
-                return (int)(raw+20) * 2;
-            }
         }
     }
     private void onResponseReceived(Object sender, final
