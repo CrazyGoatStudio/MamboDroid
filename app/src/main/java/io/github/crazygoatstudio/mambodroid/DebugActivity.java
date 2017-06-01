@@ -144,33 +144,24 @@ public class DebugActivity extends AppCompatActivity {
     }
     private int rangeAngle(float raw)
     {
-        if (raw > 70 )
+
+        if (raw < 20 && raw > -20)
         {
-            return 20;
-        }
-        else if (raw > 50 )
-        {
-            return 10;
-        }
-        else if(raw >30)
-        {
-            return 5;
-        }
-        else if(raw <-70)
-        {
-            return -20;
-        }
-        else if(raw <-50)
-        {
-            return -10;
-        }
-        else if(raw <-30)
-        {
-            return -5;
+            return 0;
         }
         else
         {
-            return 0;
+            if (raw > 70) raw = 70;
+            if (raw < -70) raw = -70;
+            if (raw > 0)
+            {
+
+                return (int)(raw-20) * 2;
+            }
+            else
+            {
+                return (int)(raw+20) * 2;
+            }
         }
     }
     private void onResponseReceived(Object sender, final
