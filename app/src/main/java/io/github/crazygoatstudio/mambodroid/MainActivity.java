@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 //Drone imports
 import com.parrot.arsdk.arcommands.ARCOMMANDS_MINIDRONE_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_ENUM;
@@ -45,11 +46,13 @@ import static io.github.crazygoatstudio.mambodroid.UtilsKt.rangeAngle;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
+
     private TextView speechtext;
     private ImageButton speechbtn;
     private ImageButton emgbtn;
     private Button North, South, East, West, Stop, Up, Down, TakeOff, Land;
-    private int leapPitch, leapRoll;
+    private int leapPitch, leapRoll, leapYawL;
 
 
     protected static final int RESULT_SPEECH = 1;
@@ -81,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
         public float Pitch;
 
         public float Roll;
+
+        public float YawL;
     }
 
     // UI controls
@@ -89,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView ctv_Pitch;
     private TextView ctv_Roll;
     private TextView ctv_Yaw;
+    private EditText leapIP;
 
 
     // Sender sending MyRequest and as a response receiving MyResponse.
@@ -128,22 +134,7 @@ public class MainActivity extends AppCompatActivity {
         // Note: From Android 3.1 (Honeycomb) or higher
         //       it is not possible to open TCP connection
         //       from the main thread.
-        Thread anOpenConnectionThread = new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    openConnection();
-                }
-                catch (Exception err)
-                {
-                    EneterTrace.error("Open connection failed.", err);
-                }
-            }
-        });
-        anOpenConnectionThread.start();
+
         //</editor-fold>
     }
     private void TraerReferencias(){
@@ -160,6 +151,8 @@ public class MainActivity extends AppCompatActivity {
         Down = (Button) findViewById(R.id.bDown);
         TakeOff = (Button) findViewById(R.id.bTakeOff);
         Land = (Button) findViewById(R.id.bLand);
+        leapIP = (EditText)findViewById(R.id.et_leapIP);
+
 
     }
     private void ProgramarEscuchaDeEvento ()
@@ -448,10 +441,35 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+    private void startThread() {
+        Thread anOpenConnectionThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    openConnection();
+                } catch (Exception err) {
+                    EneterTrace.error("Open connection failed.", err);
+                }
+            }
+        });
+        anOpenConnectionThread.start();
+    }
 
 
     private void openConnection() throws Exception
     {
+        String ip = leapIP.getText().toString();
+        if (ip.isEmpty() || ip.equals(""))
+        {
+            ip =  "172.17.2.89";
+        }
+        else if (!ip.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"))
+        {
+            return;
+        }
+
+
+
         // Create sender sending MyRequest and as a response receiving MyResponse
         IDuplexTypedMessagesFactory aSenderFactory =
                 new DuplexTypedMessagesFactory();
@@ -460,12 +478,15 @@ public class MainActivity extends AppCompatActivity {
         // Subscribe to receive response messages.
         mySender.responseReceived().subscribe(myOnResponseHandler);
 
+
         // Create TCP messaging for the communication.
         // Note: 10.0.2.2 is a special alias to the loopback (127.0.0.1)
         //       on the development machine
         IMessagingSystemFactory aMessaging = new TcpMessagingSystemFactory();
         IDuplexOutputChannel anOutputChannel =
-                aMessaging.createDuplexOutputChannel("tcp://172.17.2.89:8060/");
+//                aMessaging.createDuplexOutputChannel("tcp://0.tcp.ngrok.io:13150");
+                aMessaging.createDuplexOutputChannel("tcp://"+ip+":8060/");
+        Log.v(TAG," Trying to connect to: tcp://"+ip+":8060/");
 
         // Attach the output channel to the sender and be able to send
         // messages and receive responses.
@@ -480,14 +501,16 @@ public class MainActivity extends AppCompatActivity {
         aRequestMsg.Text ="hola";
 
         // Send the request message.
-        try
-        {
-            mySender.sendRequestMessage(aRequestMsg);
+        for(int i=0; i<10; i++) {
+            try {
+                mySender.sendRequestMessage(aRequestMsg);
+                Log.v(TAG, "Succesfull sendRequest");
+                break;
+            } catch (Exception err) {
+                EneterTrace.error("Sending the message failed.", err);
+            }
         }
-        catch (Exception err)
-        {
-            EneterTrace.error("Sending the message failed.", err);
-        }
+
     }
     private void onResponseReceived(Object sender, final
     TypedResponseReceivedEventArgs<MyResponse> e)
@@ -509,6 +532,10 @@ public class MainActivity extends AppCompatActivity {
                 leapRoll = rangeAngle(e.getResponseMessage().Roll);
                 ctv_Roll.setText(Integer.toString(leapRoll));
                 //</editor-fold>
+                // <editor-fold desc="YawL">
+                leapYawL = rangeAngle(e.getResponseMessage().YawL);
+                ctv_Yaw.setText(Integer.toString(leapYawL));
+                //</editor-fold>
                 if (leapPitch == 0 && leapRoll == 0)
                 {
                     mMiniDrone.setYaw((byte) 0);
@@ -520,6 +547,14 @@ public class MainActivity extends AppCompatActivity {
                     mMiniDrone.setFlag((byte) 1);
                     mMiniDrone.setPitch((byte) leapPitch);
                     mMiniDrone.setRoll((byte) leapRoll);
+                }
+                if (leapYawL == 0)
+                {
+                    mMiniDrone.setGaz((byte)leapYawL);
+                }
+                else
+                {
+                    mMiniDrone.setGaz((byte) 0);
                 }
 
 //                ctv_Pitch.setText(Float.toString(e.getResponseMessage().Pitch));
@@ -545,6 +580,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v)
         {
+            startThread();
             onSendRequest(v);
         }
     };
