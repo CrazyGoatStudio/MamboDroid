@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView speechtext;
     private ImageButton speechbtn;
     private ImageButton emgbtn;
-    private Button North, South, East, West, Stop, Barrel;
+    private Button North, South, East, West, Stop, Up, Down, TakeOff, Land;
     private int leapPitch, leapRoll;
 
 
@@ -156,7 +156,10 @@ public class MainActivity extends AppCompatActivity {
         East = (Button) findViewById(R.id.bEast);
         West = (Button) findViewById(R.id.bWest);
         Stop = (Button) findViewById(R.id.bStop);
-        Stop = (Button) findViewById(R.id.bBarrel);
+        Up = (Button) findViewById(R.id.bUp);
+        Down = (Button) findViewById(R.id.bDown);
+        TakeOff = (Button) findViewById(R.id.bTakeOff);
+        Land = (Button) findViewById(R.id.bLand);
 
     }
     private void ProgramarEscuchaDeEvento ()
@@ -197,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 (new View.OnClickListener() {
                      public void onClick(View arg0) {
                              mMiniDrone.setFlag((byte) 1);
-                             mMiniDrone.setPitch((byte) 15);
+                             mMiniDrone.setPitch((byte) 20);
                      }
                  }
                 );
@@ -205,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 (new View.OnClickListener() {
                      public void onClick(View arg0) {
                          mMiniDrone.setFlag((byte) 1);
-                         mMiniDrone.setPitch((byte) -15);
+                         mMiniDrone.setPitch((byte) -20);
                      }
                  }
                 );
@@ -213,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 (new View.OnClickListener() {
                      public void onClick(View arg0) {
                          mMiniDrone.setFlag((byte) 1);
-                         mMiniDrone.setRoll((byte) 15);
+                         mMiniDrone.setRoll((byte) 20);
                      }
                  }
                 );
@@ -221,14 +224,62 @@ public class MainActivity extends AppCompatActivity {
                 (new View.OnClickListener() {
                      public void onClick(View arg0) {
                          mMiniDrone.setFlag((byte) 1);
-                         mMiniDrone.setRoll((byte) -15);
+                         mMiniDrone.setRoll((byte) -20);
+                     }
+                 }
+                );
+
+        Up.setOnClickListener
+                (new View.OnClickListener() {
+                     public void onClick(View arg0) {
+                         mMiniDrone.setGaz((byte) 10);
+                     }
+                 }
+                );
+        Down.setOnClickListener
+                (new View.OnClickListener() {
+                     public void onClick(View arg0) {
+                         mMiniDrone.setGaz((byte) -10);
+                     }
+                 }
+                );
+        TakeOff.setOnClickListener
+                (new View.OnClickListener() {
+                     public void onClick(View arg0) {
+                         switch (mMiniDrone.getFlyingState()) {
+                             case ARCOMMANDS_MINIDRONE_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_LANDED:
+                                 mMiniDrone.takeOff();
+                                 break;
+                             case ARCOMMANDS_MINIDRONE_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_FLYING:
+                             case ARCOMMANDS_MINIDRONE_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_HOVERING: {
+                                 mMiniDrone.land();
+                                 break;
+                             }
+                             default:
+                         }
+                     }
+                 }
+                );
+        Land.setOnClickListener
+                (new View.OnClickListener() {
+                     public void onClick(View arg0) {
+                         switch (mMiniDrone.getFlyingState()) {
+                             case ARCOMMANDS_MINIDRONE_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_LANDED:
+                                 mMiniDrone.takeOff();
+                                 break;
+                             case ARCOMMANDS_MINIDRONE_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_FLYING:
+                             case ARCOMMANDS_MINIDRONE_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_HOVERING: {
+                                 mMiniDrone.land();
+                                 break;
+                             }
+                             default:
+                         }
                      }
                  }
                 );
         Stop.setOnClickListener
                 (new View.OnClickListener() {
                      public void onClick(View arg0) {
-//                         buttonVibrar();
                          mMiniDrone.setYaw((byte) 0);
                          mMiniDrone.setGaz((byte) 0);
                          mMiniDrone.setPitch((byte) 0);
@@ -236,14 +287,7 @@ public class MainActivity extends AppCompatActivity {
                      }
                  }
                 );
-        Stop.setOnClickListener
-                (new View.OnClickListener() {
-                     public void onClick(View arg0) {
-//                         buttonVibrar();
 
-                     }
-                 }
-                );
 
 
         // end emergency button
@@ -307,7 +351,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void onBatteryChargeChanged(int batteryPercentage) {
-            // toDo: this crap is not working, try to fix it.
             mBatteryLabel.setText(String.format("%d%%", batteryPercentage));
         }
 
